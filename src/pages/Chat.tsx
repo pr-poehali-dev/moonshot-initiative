@@ -15,7 +15,24 @@ const BADGE_COLOR: Record<string, string> = {
   "Данька Апрельский": "#3b82f6",
 }
 
-// Общая комната для звонков
+const PROFILES: Record<string, { role: string; bio: string; emoji: string }> = {
+  "Егор Просто": {
+    role: "Менеджер проектов",
+    bio: "Веду проекты от идеи до запуска. Слежу за сроками, общаюсь с клиентами и делаю так, чтобы всё шло по плану.",
+    emoji: "👨‍💼",
+  },
+  "Данил Екимов": {
+    role: "Разработчик",
+    bio: "Пишу чистый и быстрый код. Специализируюсь на фронтенде и бэкенде. Люблю сложные задачи.",
+    emoji: "👨‍💻",
+  },
+  "Данька Апрельский": {
+    role: "Дизайнер",
+    bio: "Создаю красивые и удобные интерфейсы. Верю, что хороший дизайн — это не украшение, а решение задачи.",
+    emoji: "🎨",
+  },
+}
+
 const CALL_ROOM = "general-call-room"
 
 function VerifiedBadge({ color = "#3b82f6" }: { color?: string }) {
@@ -24,6 +41,33 @@ function VerifiedBadge({ color = "#3b82f6" }: { color?: string }) {
       <path d="M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" fill={color}/>
       <path d="M9 12.5l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
+  )
+}
+
+function ProfileModal({ member, onClose }: { member: string; onClose: () => void }) {
+  const profile = PROFILES[member]
+  if (!profile) return null
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+      <div
+        className="relative z-10 bg-background rounded-2xl shadow-2xl w-full max-w-sm p-6 flex flex-col items-center text-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button onClick={onClose} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors">
+          <Icon name="X" size={18} />
+        </button>
+        <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center text-4xl mb-4">
+          {profile.emoji}
+        </div>
+        <div className="flex items-center gap-1.5 mb-1">
+          <h2 className="text-xl font-bold">{member}</h2>
+          <VerifiedBadge color={BADGE_COLOR[member] || "#3b82f6"} />
+        </div>
+        <p className="text-sm text-primary font-medium mb-3">{profile.role}</p>
+        <p className="text-sm text-muted-foreground leading-relaxed">{profile.bio}</p>
+      </div>
+    </div>
   )
 }
 
@@ -40,6 +84,7 @@ export default function Chat() {
   const [text, setText] = useState("")
   const [sending, setSending] = useState(false)
   const [banned, setBanned] = useState(false)
+  const [openProfile, setOpenProfile] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   const { status, remoteUser, isMuted, startCall, acceptCall, hangup, toggleMute, listenForCalls } = useWebRTC(name || "Гость")
@@ -108,7 +153,6 @@ export default function Chat() {
               <h1 className="text-3xl font-bold mb-1">Общение</h1>
               <p className="text-muted-foreground text-sm">Пишите или звоните — команда всегда на связи</p>
             </div>
-            {/* Кнопка звонка */}
             {status === "idle" && (
               <Button
                 onClick={handleCall}
@@ -121,16 +165,20 @@ export default function Chat() {
             )}
           </div>
 
-          {/* Участники */}
+          {/* Участники — клик по кружку открывает профиль */}
           <div className="flex items-center gap-3 mt-3 flex-wrap">
             {TEAM.map((member) => (
-              <div key={member} className="flex items-center gap-1.5 bg-muted/50 rounded-full px-3 py-1">
+              <button
+                key={member}
+                onClick={() => setOpenProfile(member)}
+                className="flex items-center gap-1.5 bg-muted/50 hover:bg-muted transition-colors rounded-full px-3 py-1 cursor-pointer"
+              >
                 <div className="w-5 h-5 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center font-bold">
                   {member[0]}
                 </div>
                 <span className="text-sm font-medium">{member}</span>
                 <VerifiedBadge color={BADGE_COLOR[member] || "#3b82f6"} />
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -183,9 +231,12 @@ export default function Chat() {
               )}
               {messages.map((msg) => (
                 <div key={msg.id} className={`flex gap-3 ${isTeam(msg.sender_name) ? "" : "flex-row-reverse"}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${isTeam(msg.sender_name) ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"}`}>
+                  <button
+                    onClick={() => isTeam(msg.sender_name) ? setOpenProfile(msg.sender_name) : undefined}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 transition-opacity ${isTeam(msg.sender_name) ? "bg-primary/20 text-primary hover:opacity-70 cursor-pointer" : "bg-muted text-muted-foreground cursor-default"}`}
+                  >
                     {getInitial(msg.sender_name)}
-                  </div>
+                  </button>
                   <div className={`max-w-[75%] ${isTeam(msg.sender_name) ? "" : "items-end"} flex flex-col gap-1`}>
                     <div className={`flex items-center gap-1 ${isTeam(msg.sender_name) ? "" : "flex-row-reverse"}`}>
                       <span className="text-xs font-semibold">{msg.sender_name}</span>
@@ -234,6 +285,9 @@ export default function Chat() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Модалка профиля */}
+      {openProfile && <ProfileModal member={openProfile} onClose={() => setOpenProfile(null)} />}
     </div>
   )
 }
