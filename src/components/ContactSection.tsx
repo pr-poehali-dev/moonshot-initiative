@@ -123,51 +123,35 @@ export function ContactSection() {
           </div>
 
           <div className="space-y-6">
-            <Card className="border-none shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110">
-                    <Mail className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">E-mail</h3>
-                    <p className="text-sm text-muted-foreground">hello@example.com</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-none shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110">
-                    <Phone className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Телефон</h3>
-                    <p className="text-sm text-muted-foreground">+7 900 123-45-67</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-none shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110">
-                    <MapPin className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Время работы</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Пн - Пт: 9:00 - 18:00
-                      <br />
-                      Выходные: по договоренности
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Наша команда</h3>
+              {[
+                { name: "Егор Просто", role: "Менеджер проектов" },
+                { name: "Данил Екимов", role: "Разработчик" },
+                { name: "Данька Апрельский", role: "Дизайнер" },
+              ].map((person) => (
+                <Card key={person.name} className="border-none shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 mb-4">
+                  <CardContent className="p-5">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-lg flex-shrink-0">
+                        {person.name[0]}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1">
+                          <p className="font-semibold">{person.name}</p>
+                          <svg className="w-5 h-5 text-blue-500 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+                            <path d="M9 12.5l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" fill="#3b82f6"/>
+                            <path d="M9 12.5l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </div>
+                        <p className="text-sm text-muted-foreground">{person.role}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
       </div>
