@@ -1,6 +1,7 @@
-"""Чат: отправка и получение сообщений между пользователями и командой."""
+"""Чат: отправка и получение сообщений между пользователями и командой. Бан за маты."""
 import json
 import os
+import re
 import psycopg2
 
 
@@ -9,6 +10,23 @@ CORS_HEADERS = {
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
 }
+
+BAD_WORDS = [
+    'блять', 'блядь', 'бля', 'ёбаный', 'ёбаная', 'ёб', 'еб', 'ебать', 'ебал', 'ебаный',
+    'пизда', 'пиздец', 'пиздить', 'пизд', 'хуй', 'хуе', 'хуя', 'хуево', 'хуйня',
+    'сука', 'суки', 'сукин', 'мудак', 'мудила', 'мудаки', 'ублюдок', 'ублюдки',
+    'пидор', 'пидорас', 'залупа', 'манда', 'шлюха', 'шлюхи', 'проститутка',
+    'долбоёб', 'долбоеб', 'ёбнутый', 'ёбнутая', 'выёбываться', 'наёбывать',
+    'cock', 'fuck', 'shit', 'bitch', 'cunt', 'asshole', 'motherfucker',
+]
+
+def has_bad_words(text: str) -> bool:
+    cleaned = text.lower()
+    cleaned = re.sub(r'[^а-яёa-z]', '', cleaned)
+    for word in BAD_WORDS:
+        if word in cleaned:
+            return True
+    return False
 
 
 def get_conn():
@@ -40,8 +58,23 @@ def handler(event: dict, context) -> dict:
         message = (body.get('message') or '').strip()
         if not sender_name or not message:
             return {'statusCode': 400, 'headers': CORS_HEADERS, 'body': json.dumps({'error': 'Заполните имя и сообщение'})}
+
         conn = get_conn()
         cur = conn.cursor()
+
+        cur.execute("SELECT id FROM chat_bans WHERE sender_name = %s", (sender_name,))
+        if cur.fetchone():
+            cur.close()
+            conn.close()
+            return {'statusCode': 403, 'headers': CORS_HEADERS, 'body': json.dumps({'error': 'banned', 'message': 'Вы заблокированы за использование нецензурной лексики.'})}
+
+        if has_bad_words(message) or has_bad_words(sender_name):
+            cur.execute("INSERT INTO chat_bans (sender_name) VALUES (%s) ON CONFLICT DO NOTHING", (sender_name[:100],))
+            conn.commit()
+            cur.close()
+            conn.close()
+            return {'statusCode': 403, 'headers': CORS_HEADERS, 'body': json.dumps({'error': 'banned', 'message': 'Вы заблокированы за использование нецензурной лексики.'})}
+
         cur.execute(
             "INSERT INTO chat_messages (sender_name, message) VALUES (%s, %s) RETURNING id, created_at",
             (sender_name[:100], message[:2000])

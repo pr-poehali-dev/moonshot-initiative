@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS chat_bans (
+  id SERIAL PRIMARY KEY,
+  sender_name VARCHAR(100) NOT NULL UNIQUE,
+  banned_at TIMESTAMP DEFAULT NOW()
+);

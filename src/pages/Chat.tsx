@@ -30,6 +30,7 @@ export default function Chat() {
   const [name, setName] = useState("")
   const [text, setText] = useState("")
   const [sending, setSending] = useState(false)
+  const [banned, setBanned] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   const fetchMessages = async () => {
@@ -52,11 +53,17 @@ export default function Chat() {
     e.preventDefault()
     if (!name.trim() || !text.trim()) return
     setSending(true)
-    await fetch(CHAT_URL, {
+    const res = await fetch(CHAT_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ sender_name: name, message: text }),
     })
+    const data = await res.json()
+    if (data.error === "banned") {
+      setBanned(true)
+      setSending(false)
+      return
+    }
     setText("")
     await fetchMessages()
     setSending(false)
@@ -121,27 +128,34 @@ export default function Chat() {
             </div>
 
             <div className="border-t p-4">
-              <form onSubmit={handleSend} className="flex flex-col gap-2">
-                <Input
-                  placeholder="Ваше имя"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="text-sm"
-                  maxLength={100}
-                />
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Напишите сообщение..."
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    className="text-sm"
-                    maxLength={2000}
-                  />
-                  <Button type="submit" disabled={sending || !name.trim() || !text.trim()} size="icon">
-                    <Icon name="Send" size={16} />
-                  </Button>
+              {banned ? (
+                <div className="flex items-center gap-3 bg-destructive/10 border border-destructive/30 rounded-xl px-4 py-3">
+                  <Icon name="Ban" size={20} className="text-destructive flex-shrink-0" />
+                  <p className="text-sm text-destructive font-medium">Вы заблокированы за использование нецензурной лексики.</p>
                 </div>
-              </form>
+              ) : (
+                <form onSubmit={handleSend} className="flex flex-col gap-2">
+                  <Input
+                    placeholder="Ваше имя"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="text-sm"
+                    maxLength={100}
+                  />
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Напишите сообщение..."
+                      value={text}
+                      onChange={(e) => setText(e.target.value)}
+                      className="text-sm"
+                      maxLength={2000}
+                    />
+                    <Button type="submit" disabled={sending || !name.trim() || !text.trim()} size="icon">
+                      <Icon name="Send" size={16} />
+                    </Button>
+                  </div>
+                </form>
+              )}
             </div>
           </CardContent>
         </Card>
