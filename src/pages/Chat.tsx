@@ -11,7 +11,8 @@ const CHAT_URL = "https://functions.poehali.dev/435b76c7-99c2-4e6d-8f14-9143e3b6
 const TEAM = ["Егор Просто", "Данил Екимов", "Данька Апрельский"]
 
 const BADGE_COLOR: Record<string, string> = {
-  "Данька Апрельский": "#9ca3af",
+  "Егор Просто": "#ffffff",
+  "Данька Апрельский": "#3b82f6",
 }
 
 // Общая комната для звонков
