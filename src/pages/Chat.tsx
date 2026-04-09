@@ -9,13 +9,17 @@ const CHAT_URL = "https://functions.poehali.dev/435b76c7-99c2-4e6d-8f14-9143e3b6
 
 const TEAM = ["Егор Просто", "Данил Екимов", "Данька Апрельский"]
 
-function VerifiedBadge() {
+function VerifiedBadge({ color = "#3b82f6" }: { color?: string }) {
   return (
-    <svg className="w-4 h-4 text-blue-500 flex-shrink-0" viewBox="0 0 24 24" fill="none">
-      <path d="M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" fill="#3b82f6"/>
+    <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+      <path d="M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" fill={color}/>
       <path d="M9 12.5l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   )
+}
+
+const BADGE_COLOR: Record<string, string> = {
+  "Данька Апрельский": "#9ca3af",
 }
 
 interface Message {
@@ -92,7 +96,7 @@ export default function Chat() {
                   {member[0]}
                 </div>
                 <span className="text-sm font-medium">{member}</span>
-                <VerifiedBadge />
+                <VerifiedBadge color={BADGE_COLOR[member] || "#3b82f6"} />
               </div>
             ))}
           </div>
@@ -115,7 +119,7 @@ export default function Chat() {
                   <div className={`max-w-[75%] ${isTeam(msg.sender_name) ? "" : "items-end"} flex flex-col gap-1`}>
                     <div className={`flex items-center gap-1 ${isTeam(msg.sender_name) ? "" : "flex-row-reverse"}`}>
                       <span className="text-xs font-semibold">{msg.sender_name}</span>
-                      {isTeam(msg.sender_name) && <VerifiedBadge />}
+                      {isTeam(msg.sender_name) && <VerifiedBadge color={BADGE_COLOR[msg.sender_name] || "#3b82f6"} />}
                     </div>
                     <div className={`rounded-2xl px-4 py-2 text-sm leading-relaxed ${isTeam(msg.sender_name) ? "bg-muted rounded-tl-sm" : "bg-primary text-primary-foreground rounded-tr-sm"}`}>
                       {msg.message}
