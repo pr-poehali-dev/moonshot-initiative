@@ -1,0 +1,12 @@
+{
+  "tests": [
+    {
+      "name": "GET signals",
+      "method": "GET",
+      "path": "/?room_id=test&after=0",
+      "expectedStatus": 200,
+      "expectedBody": {"signals": []},
+      "bodyMatcher": "partial"
+    }
+  ]
+}
