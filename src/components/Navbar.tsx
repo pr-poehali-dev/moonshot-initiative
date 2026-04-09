@@ -42,6 +42,9 @@ export function Navbar() {
             <a href="#contact" className="text-sm font-medium hover:text-primary transition-colors">
               Контакты
             </a>
+            <a href="/chat" className="text-sm font-medium bg-primary text-primary-foreground px-4 py-1.5 rounded-full hover:bg-primary/90 transition-colors">
+              Общение
+            </a>
           </div>
 
           <div className="flex items-center gap-2">
