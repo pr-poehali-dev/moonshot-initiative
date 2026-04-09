@@ -5,21 +5,24 @@ import { Quote } from "lucide-react"
 const testimonials = [
   {
     quote:
-      "Быстро и результативно! Искал логотип, который идеально представит мой бизнес, и CodeCraft меня не разочаровали. :)",
-    name: "Патрик",
-    role: "Предприниматель",
+      "Работали быстро, всё чётко по делу. Сайт запустили в срок, всё работает как надо — рекомендую!",
+    name: "Егор Просто",
+    role: "Клиент",
+    verified: true,
   },
   {
     quote:
-      "Для нашего фонда мы хотели полностью обновить старый сайт и автоматизировать множество ручных задач. CodeCraft создал для нас отличный продукт, полностью под наши нужды, с программным обеспечением, которое избавило нас от рутины.",
-    name: "Мехмет",
-    role: "Председатель НКО",
+      "Ребята сделали отличный проект под мои задачи. Всё продумано, удобно, современно. Остался очень доволен результатом.",
+    name: "Данил Екимов",
+    role: "Клиент",
+    verified: true,
   },
   {
     quote:
-      "Для нового бизнеса мне нужен был красивый свежий сайт как визитная карточка. Теперь у меня потрясающий и быстрый сайт, который еще и отлично индексируется в Google! Просто супер.",
-    name: "Юрий",
-    role: "Предприниматель",
+      "Крутая команда! Всё сделали быстро и красиво, никаких лишних вопросов — просто взяли и сделали. Огонь!",
+    name: "Данька Апрельский",
+    role: "Клиент",
+    verified: true,
   },
 ]
 
@@ -72,9 +75,19 @@ export function TestimonialsSection() {
                   <p className="text-base sm:text-lg mb-6 leading-relaxed text-pretty min-h-[120px]">
                     {testimonial.quote}
                   </p>
-                  <div>
-                    <p className="font-semibold text-lg">{testimonial.name}</p>
-                    <p className="text-muted-foreground text-sm">{testimonial.role}</p>
+                  <div className="flex items-center gap-2">
+                    <div>
+                      <div className="flex items-center gap-1">
+                        <p className="font-semibold text-lg">{testimonial.name}</p>
+                        {testimonial.verified && (
+                          <svg className="w-5 h-5 text-blue-500 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                            <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                          </svg>
+                        )}
+                      </div>
+                      <p className="text-muted-foreground text-sm">{testimonial.role}</p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
